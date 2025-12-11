@@ -5,7 +5,7 @@ pipeline {
 
         stage("Checkout code") {
             steps {
-                git branch: 'group_e', url: 'https://github.com/women-techsters-fellowship/november_mini_project.git'
+                git branch: 'main', url: 'https://github.com/Cybertemi/november_project.git'
             }
         }
 
@@ -18,7 +18,7 @@ pipeline {
                     sh '''
                         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
                         docker build -t $DOCKER_USERNAME/group_e:v1 -f Dockerfile .
-                        docker push $DOCKER_USERNAME/group_e:v1
+                        docker push $DOCKER_USERNAME/main:v1
                     '''
                 }
             }
