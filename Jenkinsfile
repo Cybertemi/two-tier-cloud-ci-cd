@@ -5,6 +5,9 @@ pipeline {
 
         stage("Checkout code") {
             steps {
+                sshagent(['github-ssh-key']) 
+                sh 'git ls-remote git@github.com:Cybertemi/november_project.git HEAD'
+
                 git branch: 'main', url: 'https://github.com/Cybertemi/november_project.git'
             }
         }
@@ -17,8 +20,8 @@ pipeline {
 
                     sh '''
                         docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-                        docker build -t $DOCKER_USERNAME/group_e:v1 -f Dockerfile .
-                        docker push $DOCKER_USERNAME/main:v1
+                        docker build -t $DOCKER_USERNAME/myapp:latest -f Dockerfile .
+                        docker push $DOCKER_USERNAME/main:latest
                     '''
                 }
             }
