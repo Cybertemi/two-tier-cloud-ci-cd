@@ -30,7 +30,7 @@ pipeline {
                 withCredentials([
                     sshUserPrivateKey(credentialsId: 'EC2_KEY', keyFileVariable: 'SSH_KEY'),
                     string(credentialsId: 'EC2_HOST', variable: 'EC2_HOST'),
-                    usernamePassword(credentialsId: 'docker_creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')
+                    usernamePassword(credentialsId: 'DOCKER_CRED', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')
                 ]) {
 
                     sh '''
