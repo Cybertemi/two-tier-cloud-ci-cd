@@ -33,7 +33,7 @@ pipeline {
                     usernamePassword(credentialsId: 'DOCKER_CRED', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')
                 ]) {
 
-                    sh '''
+    sh """
     chmod 600 "$SSH_KEY"
 
     ssh -o StrictHostKeyChecking=no -i "$SSH_KEY" ubuntu@"$EC2_HOST" << EOF
