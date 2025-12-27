@@ -32,8 +32,8 @@ pipeline {
             steps {
                 withCredentials([
                     sshUserPrivateKey(
-                        credentialsId: 'EC2_KEY',
-                        keyFileVariable: 'SSH_KEY'
+                        credentialsId: 'EC2_UBUNTU',
+                        keyFileVariable: 'EC2_UBUNTU'
                     ),
                     string(
                         credentialsId: 'EC2_HOST',
@@ -46,9 +46,9 @@ pipeline {
                     )
                 ]) {
                     sh """
-                        chmod 600 "\$SSH_KEY"
+                        chmod 600 "\$EC2_UBUNTU"
 
-                        ssh -o StrictHostKeyChecking=no -i "\$SSH_KEY" ubuntu@"\$EC2_HOST" << EOF
+                        ssh -o StrictHostKeyChecking=no -i "\$EC2_UBUNTU" ubuntu@"\$EC2_HOST" << EOF
                           echo "Connected to EC2"
                           export DOCKER_USERNAME="\$DOCKER_USERNAME"
                           export DOCKER_PASSWORD="\$DOCKER_PASSWORD"
