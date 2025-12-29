@@ -15,7 +15,6 @@ if ! command -v docker &> /dev/null; then
     sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 fi
 
-
 # Install Docker Compose if not installed
 if ! command -v docker-compose &> /dev/null; then
     echo "Installing Docker Compose..."
