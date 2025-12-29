@@ -1,40 +1,42 @@
 #!/bin/bash
 
 #!/bin/bash
-
-# Exit immediately if a command fails
 set -e
 
-# Make sure Docker credentials are set via environment variables
-if [ -z "$DOCKER_USERNAME" ] || [ -z "$DOCKER_PASSWORD" ]; then
-    echo "ERROR: DOCKER_USERNAME or DOCKER_PASSWORD is not set"
-    exit 1
+# Install Docker if not installed
+if ! command -v docker &> /dev/null; then
+    echo "Installing Docker..."
+    sudo apt-get update -y
+    sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+        | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update -y
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 fi
 
-# Log in to Docker Hub
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-
-# Define your Docker image
-IMAGE_NAME="$DOCKER_USERNAME/myapp:latest"
-CONTAINER_NAME="myapp"
-
-# Stop and remove existing container if it exists
-if [ "$(docker ps -q -f name=$CONTAINER_NAME)" ]; then
-    echo "Stopping existing container..."
-    docker stop $CONTAINER_NAME
+# Install Docker Compose if not installed
+if ! command -v docker-compose &> /dev/null; then
+    echo "Installing Docker Compose..."
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
 fi
 
-if [ "$(docker ps -aq -f name=$CONTAINER_NAME)" ]; then
-    echo "Removing existing container..."
-    docker rm $CONTAINER_NAME
+# Stop all running containers
+if [ "$(docker ps -q)" ]; then
+    echo "Stopping all running containers..."
+    docker stop $(docker ps -q)
 fi
 
-# Pull the latest image
-echo "Pulling latest Docker image: $IMAGE_NAME"
-docker pull $IMAGE_NAME
+# Optionally remove all stopped containers to avoid conflicts
+if [ "$(docker ps -aq)" ]; then
+    echo "Removing all stopped containers..."
+    docker rm $(docker ps -aq)
+fi
 
-# Run the container
-echo "Starting container: $CONTAINER_NAME"
-docker run -d --name $CONTAINER_NAME -p 80:8000 $IMAGE_NAME
+# Pull latest images and start containers
+cd /home/ubuntu/two-tier-app
+docker-compose pull
+docker-compose up -d
 
 echo "Deployment successful!"

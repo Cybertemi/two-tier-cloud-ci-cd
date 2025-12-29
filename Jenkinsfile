@@ -6,7 +6,7 @@ pipeline {
         stage("Checkout code") {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Cybertemi/november_project.git'
+                    url: 'https://github.com/Cybertemi/two-tier-cloud-ci-cd'
             }
         }
 
@@ -32,23 +32,18 @@ pipeline {
             steps {
                 withCredentials([
                     sshUserPrivateKey(
-                        credentialsId: 'EC2_UBUNTU',
-                        keyFileVariable: 'EC2_UBUNTU'
+                        credentialsId: 'EC2_KEY',
+                        keyFileVariable: 'EC2_KEY'
                     ),
                     string(
                         credentialsId: 'EC2_HOST',
                         variable: 'EC2_HOST'
                     ),
-                    usernamePassword(
-                        credentialsId: 'DOCKER_CRED',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
-                    )
                 ]) {
                     sh """
-                        chmod 600 "\$EC2_UBUNTU"
+                        chmod 600 "\$EC2_KEY"
 
-                        ssh -o StrictHostKeyChecking=no -i "\$EC2_UBUNTU" ubuntu@"\$EC2_HOST" << EOF
+                        ssh -o StrictHostKeyChecking=no -i "\$EC2_KEY" ubuntu@"\$EC2_HOST" << EOF
                           echo "Connected to EC2"
                           export DOCKER_USERNAME="\$DOCKER_USERNAME"
                           export DOCKER_PASSWORD="\$DOCKER_PASSWORD"
