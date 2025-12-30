@@ -51,7 +51,7 @@ pipeline {
 
                         cd /home/ubuntu
                         bash deploy.sh
-                        EOF
+EOF
                     """
                 }
             }
