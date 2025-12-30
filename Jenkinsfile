@@ -42,11 +42,16 @@ pipeline {
                 ]) {
                     sh """
                         chmod 600 "\$EC2_KEY"
-                        ssh -o StrictHostKeyChecking=no -i "\$EC2_KEY" ubuntu@\$EC2_HOST \\
-                        "export DOCKER_USERNAME='${DOCKER_USERNAME}' && \
-                         export DOCKER_PASSWORD='${DOCKER_PASSWORD}' && \
-                         cd /home/ubuntu && \
-                         bash deploy.sh"
+
+                        ssh -o StrictHostKeyChecking=no -i "\$EC2_KEY" ubuntu@\$EC2_HOST << 'EOF'
+                        echo "Connected to EC2"
+
+                        export DOCKER_USERNAME="\$DOCKER_USERNAME"
+                        export DOCKER_PASSWORD="\$DOCKER_PASSWORD"
+
+                        cd /home/ubuntu
+                        bash deploy.sh
+                        EOF
                     """
                 }
             }
